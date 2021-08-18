@@ -1,0 +1,18 @@
+[
+  {
+    "tag" : "VALID",
+    "firstName": "John",
+    "lastName": "Doe",
+    "peselCode": "70082742729",
+    "email": "john_mail@mail.com",
+    "phoneNr": "660573996"
+  },
+  {
+    "tag" : "INVALID",
+    "firstName": "name",
+    "lastName": "surname",
+    "peselCode": "123",
+    "email": "nonmail",
+    "phoneNr": "456"
+  }
+]

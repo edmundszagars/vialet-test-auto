@@ -1,0 +1,51 @@
+plugins {
+    id 'java'
+}
+
+group 'ez'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+configurations {
+    cucumberRuntime {
+        extendsFrom testImplementation
+    }
+}
+
+dependencies {
+    implementation group: 'io.cucumber', name: 'cucumber-java', version: '6.10.4'
+    implementation group: 'io.cucumber', name: 'cucumber-junit', version: '6.10.4'
+    testImplementation group: 'io.cucumber', name: 'cucumber-picocontainer', version: '6.10.4'
+    implementation group: 'com.codeborne', name: 'selenide', version: '5.21.0'
+    implementation group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
+    compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.20'
+    annotationProcessor 'org.projectlombok:lombok:1.18.20'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+}
+
+ext {
+    systemProps = [
+            "BROWSER"  : project.getProperties().get("BROWSER") ?: "chrome",
+            "LOCAL_RUN": project.getProperties().get("LOCAL_RUN") ?: "true"
+    ]
+}
+
+task cucumber() {
+    def tags = System.getProperty("cucumber.tags") ?: ""
+    dependsOn assemble, compileTestJava
+    doLast {
+        javaexec {
+            main = "io.cucumber.core.cli.Main"
+            classpath = configurations.cucumberRuntime + sourceSets.main.output + sourceSets.test.output
+            systemProperties = systemProps
+            args = ['--tags', tags,
+                    '--plugin', 'html:build/reports/test-report.html',
+                    '--plugin', 'pretty', '--glue',
+                    'lv/ez/stepdefs', 'src/test/resources']
+        }
+    }
+}
